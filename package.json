@@ -1,0 +1,20 @@
+{
+  "name": "dodo-checkout-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter @dodo/merchant --filter @dodo/checkout dev",
+    "dev:merchant": "pnpm --filter @dodo/merchant dev",
+    "dev:checkout": "pnpm --filter @dodo/checkout dev",
+    "build": "pnpm -r build",
+    "test": "pnpm --filter @dodo/sdk test",
+    "test:watch": "pnpm --filter @dodo/sdk test:watch",
+    "test:e2e": "playwright test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.44.1",
+    "typescript": "5.4.5"
+  }
+}
