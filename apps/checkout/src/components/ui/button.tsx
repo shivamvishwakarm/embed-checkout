@@ -11,9 +11,9 @@ export type ButtonVariant =
 export type ButtonSize = "default" | "sm" | "lg" | "icon";
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-  loading?: boolean;
+  variant?: ButtonVariant | undefined;
+  size?: ButtonSize | undefined;
+  loading?: boolean | undefined;
 };
 
 const variantClasses: Record<ButtonVariant, string> = {

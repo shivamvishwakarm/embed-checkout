@@ -291,7 +291,7 @@ export function CheckoutPageShell() {
 
   return (
     <main
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 sm:p-6 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-3 sm:p-6 backdrop-blur-md transition-opacity"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           checkout.closeCheckout();
@@ -302,7 +302,7 @@ export function CheckoutPageShell() {
       aria-label="Checkout dialog"
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xl transition-all"
+        className="w-full max-w-lg md:max-w-3xl lg:max-w-4xl overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-2xl transition-all animate-modal-in my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <CheckoutShell
