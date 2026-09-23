@@ -25,7 +25,8 @@ import {
 } from "@/lib/protocol";
 import { validateHostMessage } from "@/lib/protocol-validator";
 
-const DEFAULT_MERCHANT_ORIGIN = "http://localhost:3000";
+const DEFAULT_MERCHANT_ORIGIN =
+  process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] ?? "http://localhost:3000";
 
 function getReferrerOrigin(): string {
   if (typeof window === "undefined") {
@@ -51,16 +52,28 @@ function getInitialForm(productId = ""): PaymentInput {
 }
 
 export function useCheckoutSession() {
-  const [state, setState] = useState<CheckoutState>(createInitialState());
-  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
-  const [form, setForm] = useState<PaymentInput>(getInitialForm());
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [sourceOrigin] = useState<string>(getReferrerOrigin);
+  const initialSession = typeof window !== "undefined" ? getCheckoutSessionFromUrl(window.location.search, sourceOrigin) : null;
+  const initialProduct = initialSession?.productId ? getProduct(initialSession.productId) : undefined;
+
+  const [state, setState] = useState<CheckoutState>(() =>
+    initialProduct ? readyState(initialProduct) : createInitialState(),
+  );
+  const [sessionId, setSessionId] = useState<string | undefined>(() => initialSession?.sessionId);
+  const [form, setForm] = useState<PaymentInput>(() => getInitialForm(initialSession?.productId ?? ""));
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const engineRef = useRef<DeterministicFakePaymentEngine | null>(null);
   if (!engineRef.current) {
     engineRef.current = new DeterministicFakePaymentEngine();
   }
+
+  const sessionIdRef = useRef<string | undefined>(sessionId);
+  const hasSentReadyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+  }, [sessionId]);
 
   const product =
     state.status === "READY" ||
@@ -71,18 +84,29 @@ export function useCheckoutSession() {
       : getProduct(form.productId);
 
   const applySession = useCallback((nextSessionId: string, nextProductId: string) => {
-    const nextProduct = getProduct(nextProductId);
+    sessionIdRef.current = nextSessionId;
     setSessionId(nextSessionId);
     setForm((current) => ({ ...current, productId: nextProductId }));
 
+    const nextProduct = getProduct(nextProductId);
     if (!nextProduct) {
       setState(errorState("INVALID_PRODUCT", "This product is unavailable."));
       return;
     }
 
-    setState(readyState(nextProduct));
+    setState((currentState) => {
+      if (currentState.status !== "CREATED" && currentState.status !== "LOADING") {
+        return currentState;
+      }
+      return readyState(nextProduct);
+    });
+
     setErrorMessage(undefined);
-    sendCheckoutReady(nextSessionId);
+
+    if (hasSentReadyRef.current !== nextSessionId) {
+      hasSentReadyRef.current = nextSessionId;
+      sendCheckoutReady(nextSessionId);
+    }
   }, []);
 
   useEffect(() => {
@@ -105,7 +129,8 @@ export function useCheckoutSession() {
       }
 
       if (hostMessage.type === "CHECKOUT_CLOSE") {
-        if (sessionId && hostMessage.sessionId !== sessionId) {
+        const currentSessionId = sessionIdRef.current;
+        if (currentSessionId && hostMessage.sessionId !== currentSessionId) {
           return;
         }
 
@@ -115,7 +140,7 @@ export function useCheckoutSession() {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [applySession, sessionId, sourceOrigin]);
+  }, [applySession, sourceOrigin]);
 
   const onFieldChange = useCallback((field: keyof PaymentInput, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -124,14 +149,16 @@ export function useCheckoutSession() {
     }
   }, [errorMessage]);
 
-  const submitPayment = useCallback(async () => {
-    const productForPayment = product ?? getProduct(form.productId);
+  const submitPayment = useCallback(async (customInput?: PaymentInput) => {
+    const activeForm = customInput ?? form;
+    const currentSessionId = sessionId ?? sessionIdRef.current;
+    const productForPayment = product ?? getProduct(activeForm.productId);
     if (!productForPayment) {
       setState(errorState("INVALID_PRODUCT", "The selected product could not be found."));
       return;
     }
 
-    if (!sessionId) {
+    if (!currentSessionId) {
       setState(errorState("CHECKOUT_SESSION_INVALID", "This checkout session is unavailable."));
       return;
     }
@@ -141,12 +168,12 @@ export function useCheckoutSession() {
     }
 
     const normalizedInput: PaymentInput = {
-      ...form,
+      ...activeForm,
       productId: productForPayment.id,
-      email: form.email.trim(),
-      cardNumber: form.cardNumber,
-      expiry: form.expiry,
-      cvv: form.cvv,
+      email: activeForm.email.trim(),
+      cardNumber: activeForm.cardNumber,
+      expiry: activeForm.expiry,
+      cvv: activeForm.cvv,
     };
 
     if (!normalizedInput.email || !normalizedInput.cardNumber || !normalizedInput.expiry || !normalizedInput.cvv) {
@@ -161,8 +188,8 @@ export function useCheckoutSession() {
     const result = await engineRef.current!.charge(normalizedInput);
 
     if (result.ok) {
-      setState(successState(sessionId));
-      sendPaymentSuccess(sessionId, result.attemptId);
+      setState(successState(currentSessionId));
+      sendPaymentSuccess(currentSessionId, result.attemptId);
       return;
     }
 
@@ -173,7 +200,7 @@ export function useCheckoutSession() {
     };
 
     setState(failureState(productForPayment, paymentError, paymentError.retryable));
-    sendPaymentError(sessionId, result.attemptId, paymentError.code, paymentError.message);
+    sendPaymentError(currentSessionId, result.attemptId, paymentError.code, paymentError.message);
   }, [form, product, sessionId, state.status]);
 
   const retryPayment = useCallback(() => {
@@ -186,7 +213,11 @@ export function useCheckoutSession() {
   }, [product]);
 
   const closeCheckout = useCallback(() => {
-    if (!sessionId) {
+    const currentSessionId =
+      sessionId ??
+      sessionIdRef.current ??
+      (typeof window !== "undefined" ? getCheckoutSessionFromUrl(window.location.search, sourceOrigin)?.sessionId : undefined);
+    if (!currentSessionId) {
       setState(closedState("USER_CLOSED"));
       return;
     }
@@ -197,8 +228,8 @@ export function useCheckoutSession() {
     }
 
     setState(closedState("USER_CLOSED"));
-    sendCheckoutClosed(sessionId, "USER_CLOSED");
-  }, [form.productId, product, sessionId, state.status]);
+    sendCheckoutClosed(currentSessionId, "USER_CLOSED");
+  }, [form.productId, product, sessionId, sourceOrigin, state.status]);
 
   const cancelClose = useCallback(() => {
     const restoreProduct = product ?? getProduct(form.productId);
@@ -211,14 +242,18 @@ export function useCheckoutSession() {
   }, [form.productId, product]);
 
   const confirmClose = useCallback(() => {
-    if (!sessionId) {
+    const currentSessionId =
+      sessionId ??
+      sessionIdRef.current ??
+      (typeof window !== "undefined" ? getCheckoutSessionFromUrl(window.location.search, sourceOrigin)?.sessionId : undefined);
+    if (!currentSessionId) {
       setState(closedState("USER_CLOSED"));
       return;
     }
 
     setState(closedState("USER_CLOSED"));
-    sendCheckoutClosed(sessionId, "USER_CLOSED");
-  }, [sessionId]);
+    sendCheckoutClosed(currentSessionId, "USER_CLOSED");
+  }, [sessionId, sourceOrigin]);
 
   return {
     state,

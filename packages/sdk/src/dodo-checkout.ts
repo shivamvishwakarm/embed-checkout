@@ -46,6 +46,9 @@ export class DodoCheckout {
       productId: session.productId,
     };
 
+    iframe.addEventListener("load", () => {
+      iframe.contentWindow?.postMessage(initMessage, CHECKOUT_ORIGIN);
+    });
     iframe.contentWindow?.postMessage(initMessage, CHECKOUT_ORIGIN);
 
     this.readyTimeoutId = window.setTimeout(() => {
