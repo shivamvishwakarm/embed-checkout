@@ -159,4 +159,68 @@ test.describe("Dodo Checkout End-to-End Integration", () => {
     // Still exactly 1 iframe
     await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(1);
   });
+
+  test("8.1: Focus returns to invoking Buy button when checkout is closed", async ({ page }) => {
+    const buyButton = page.locator("button", { hasText: "Buy for $49" });
+    await buyButton.focus();
+    await buyButton.click();
+
+    const frame = page.frameLocator('iframe[title="Dodo Checkout"]');
+    await expect(frame.getByText("Dodo Starter Kit")).toBeVisible({ timeout: 5000 });
+
+    const closeBtn = frame.getByRole("button", { name: /Close checkout/i });
+    await closeBtn.click();
+
+    await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
+    await expect(buyButton).toBeFocused();
+  });
+
+  test("8.2: Escape key closes checkout and returns focus", async ({ page }) => {
+    const buyButton = page.locator("button", { hasText: "Buy for $49" });
+    await buyButton.focus();
+    await buyButton.click();
+
+    const frame = page.frameLocator('iframe[title="Dodo Checkout"]');
+    await expect(frame.getByText("Dodo Starter Kit")).toBeVisible({ timeout: 5000 });
+
+    // Press Escape inside the iframe
+    const iframeElement = page.locator('iframe[title="Dodo Checkout"]');
+    await iframeElement.focus();
+    await page.keyboard.press("Escape");
+
+    await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
+    await expect(buyButton).toBeFocused();
+  });
+
+  test("8.2: Pressing Enter in input field submits the payment form", async ({ page }) => {
+    await page.locator("button", { hasText: "Buy for $49" }).click();
+
+    const frame = page.frameLocator('iframe[title="Dodo Checkout"]');
+    await expect(frame.getByText("Dodo Starter Kit")).toBeVisible({ timeout: 5000 });
+
+    await frame.getByLabel(/email/i).fill("buyer@example.com");
+    await frame.getByLabel(/card number/i).fill("4242424242424242");
+    await frame.getByLabel(/expiry/i).fill("12/28");
+    const cvvInput = frame.getByLabel(/cvv/i);
+    await cvvInput.fill("123");
+
+    // Press Enter to submit
+    await cvvInput.press("Enter");
+
+    await expect(page.getByText("Payment Completed Successfully!")).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
+  });
+
+  test("8.3: Clicking on backdrop overlay closes the checkout", async ({ page }) => {
+    await page.locator("button", { hasText: "Buy for $49" }).click();
+
+    const frame = page.frameLocator('iframe[title="Dodo Checkout"]');
+    await expect(frame.getByText("Dodo Starter Kit")).toBeVisible({ timeout: 5000 });
+
+    // Click on the backdrop (outside the max-w-md dialog card)
+    const backdrop = frame.getByRole("dialog");
+    await backdrop.click({ position: { x: 10, y: 10 } });
+
+    await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
+  });
 });

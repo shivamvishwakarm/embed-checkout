@@ -40,11 +40,13 @@ export function CardForm({
         disabled={disabled}
         error={errors?.cardNumber}
         autoComplete="cc-number"
+        maxLength={19}
+        required
       />
 
       <div className="grid grid-cols-2 gap-4">
         <Input
-          label="Expiry"
+          label="Expiry date"
           type="text"
           inputMode="numeric"
           value={expiry}
@@ -53,10 +55,12 @@ export function CardForm({
           disabled={disabled}
           error={errors?.expiry}
           autoComplete="cc-exp"
+          maxLength={5}
+          required
         />
 
         <Input
-          label="CVV"
+          label="CVV / CVC"
           type="password"
           inputMode="numeric"
           value={cvv}
@@ -65,6 +69,8 @@ export function CardForm({
           disabled={disabled}
           error={errors?.cvv}
           autoComplete="cc-csc"
+          maxLength={4}
+          required
         />
       </div>
     </div>

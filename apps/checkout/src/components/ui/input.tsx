@@ -28,9 +28,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={Boolean(error) || undefined}
           aria-describedby={helperId}
           className={cn(
-            "flex h-11 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition-colors",
-            "placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-200",
-            error && "border-red-300 focus:border-red-400 focus:ring-red-100",
+            "flex h-11 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-base sm:text-sm text-slate-900 shadow-sm transition-all",
+            "placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500",
+            error && "border-red-500 focus:border-red-600 focus:ring-red-500/20",
             className,
           )}
           {...props}
@@ -43,7 +43,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ) : null}
 
         {error ? (
-          <p id={helperId} className="text-xs text-red-600">
+          <p id={helperId} role="alert" className="text-xs font-medium text-red-600">
             {error}
           </p>
         ) : null}

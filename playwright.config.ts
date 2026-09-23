@@ -11,6 +11,20 @@ export default defineConfig({
     channel: "chrome",
     headless: true,
   },
+  webServer: [
+    {
+      command: "pnpm --filter @dodo/merchant start",
+      url: "http://localhost:3000",
+      reuseExistingServer: !process.env["CI"],
+      timeout: 30000,
+    },
+    {
+      command: "pnpm --filter @dodo/checkout start",
+      url: "http://localhost:3001",
+      reuseExistingServer: !process.env["CI"],
+      timeout: 30000,
+    },
+  ],
   projects: [
     {
       name: "chromium",

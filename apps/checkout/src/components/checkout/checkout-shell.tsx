@@ -49,16 +49,25 @@ export function CheckoutShell({
       : getProduct(form.productId) ?? { id: form.productId, name: "Dodo Checkout", description: "Secure payment", price: 0, currency: "USD" });
 
   const renderReadyState = () => (
-    <div className="space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!processing) {
+          onSubmit?.(form);
+        }
+      }}
+      className="space-y-6"
+    >
       <CheckoutHeader title="Secure checkout" onClose={onClose} />
       <ProductSummary product={resolvedProduct} />
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         <CustomerForm
           value={form.email}
           onChange={(value) => onFieldChange?.("email", value)}
           error={errorMessage}
           disabled={processing}
+          autoFocus
         />
 
         <CardForm
@@ -70,8 +79,16 @@ export function CheckoutShell({
         />
       </div>
 
-      <PaymentButton processing={processing} disabled={processing} onClick={() => onSubmit?.(form)} />
-    </div>
+      <div className="space-y-3 pt-1">
+        <PaymentButton processing={processing} disabled={processing} />
+        <div className="flex items-center justify-center gap-1.5 text-slate-400">
+          <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+          </svg>
+          <span className="text-[11px] font-medium tracking-wide">End-to-end encrypted · Simulated Sandbox</span>
+        </div>
+      </div>
+    </form>
   );
 
   const renderProcessingState = () => (
@@ -79,12 +96,12 @@ export function CheckoutShell({
       <CheckoutHeader title="Processing payment" onClose={onClose} />
       <ProductSummary product={resolvedProduct} />
 
-      <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-        <div className="flex items-center gap-3 text-slate-700">
-          <Spinner size="md" className="text-slate-700" />
-          <div>
-            <p className="font-medium">Processing your payment</p>
-            <p className="text-sm text-slate-500">This should only take a moment.</p>
+      <div className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-6 text-center">
+        <div className="flex flex-col items-center justify-center gap-3 text-slate-700">
+          <Spinner size="lg" className="text-slate-900" />
+          <div className="space-y-1">
+            <p className="font-semibold text-slate-900">Contacting card network...</p>
+            <p className="text-xs text-slate-500">Please do not refresh or close this window.</p>
           </div>
         </div>
       </div>
@@ -132,16 +149,58 @@ export function CheckoutShell({
     </div>
   );
 
+  const renderLoadingSkeleton = () => (
+    <div className="space-y-6 animate-pulse" aria-busy="true" aria-label="Loading checkout">
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="space-y-2">
+          <div className="h-2.5 w-24 rounded-full bg-slate-200" />
+          <div className="h-5 w-36 rounded-lg bg-slate-200" />
+        </div>
+        <div className="h-9 w-9 rounded-full bg-slate-200" />
+      </div>
+
+      <div className="rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 space-y-3">
+        <div className="flex justify-between items-center">
+          <div className="space-y-1.5">
+            <div className="h-2.5 w-20 rounded-full bg-slate-200" />
+            <div className="h-4 w-32 rounded-lg bg-slate-200" />
+          </div>
+          <div className="h-5 w-16 rounded-lg bg-slate-200" />
+        </div>
+        <div className="h-3 w-48 rounded bg-slate-200" />
+      </div>
+
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <div className="h-3 w-20 rounded bg-slate-200" />
+          <div className="h-11 w-full rounded-xl bg-slate-100 border border-slate-200" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-3 w-24 rounded bg-slate-200" />
+          <div className="h-11 w-full rounded-xl bg-slate-100 border border-slate-200" />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <div className="h-3 w-16 rounded bg-slate-200" />
+            <div className="h-11 w-full rounded-xl bg-slate-100 border border-slate-200" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-3 w-14 rounded bg-slate-200" />
+            <div className="h-11 w-full rounded-xl bg-slate-100 border border-slate-200" />
+          </div>
+        </div>
+      </div>
+
+      <div className="h-12 w-full rounded-xl bg-slate-200" />
+      <p className="text-center text-xs text-slate-400">Loading checkout...</p>
+    </div>
+  );
+
   switch (state.status) {
     case "CREATED":
       return renderReadyState();
     case "LOADING":
-      return (
-        <div className="flex min-h-[280px] flex-col items-center justify-center gap-4 rounded-2xl border border-slate-200 bg-white p-6">
-          <Spinner size="lg" className="text-slate-700" />
-          <p className="text-sm text-slate-600">Loading checkout...</p>
-        </div>
-      );
+      return renderLoadingSkeleton();
     case "READY":
       return renderReadyState();
     case "PROCESSING":

@@ -255,6 +255,22 @@ export function useCheckoutSession() {
     sendCheckoutClosed(currentSessionId, "USER_CLOSED");
   }, [sessionId, sourceOrigin]);
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (state.status === "CLOSE_CONFIRMATION") {
+          cancelClose();
+        } else {
+          closeCheckout();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [cancelClose, closeCheckout, state.status]);
+
   return {
     state,
     form,
@@ -274,18 +290,35 @@ export function CheckoutPageShell() {
   const checkout = useCheckoutSession();
 
   return (
-    <CheckoutShell
-      state={checkout.state}
-      form={checkout.form}
-      onFieldChange={checkout.onFieldChange}
-      onSubmit={checkout.submitPayment}
-      onClose={checkout.closeCheckout}
-      onRetry={checkout.retryPayment}
-      onCancelClose={checkout.cancelClose}
-      onConfirmClose={checkout.confirmClose}
-      sessionId={checkout.sessionId}
-      errorMessage={checkout.errorMessage}
-      product={checkout.product}
-    />
+    <main
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 sm:p-6 backdrop-blur-sm transition-opacity"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          checkout.closeCheckout();
+        }
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Checkout dialog"
+    >
+      <div
+        className="w-full max-w-md overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xl transition-all"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <CheckoutShell
+          state={checkout.state}
+          form={checkout.form}
+          onFieldChange={checkout.onFieldChange}
+          onSubmit={checkout.submitPayment}
+          onClose={checkout.closeCheckout}
+          onRetry={checkout.retryPayment}
+          onCancelClose={checkout.cancelClose}
+          onConfirmClose={checkout.confirmClose}
+          sessionId={checkout.sessionId}
+          errorMessage={checkout.errorMessage}
+          product={checkout.product}
+        />
+      </div>
+    </main>
   );
 }

@@ -11,9 +11,15 @@ export class DodoCheckout {
   private readonly sessionManager = new SessionManager();
   private readonly iframeManager = new IframeManager();
   private readonly messageHandler = (event: MessageEvent<unknown>) => this.handleMessage(event);
+  private readonly escapeHandler = (event: KeyboardEvent) => {
+    if (event.key === "Escape" && this.sessionManager.isActive()) {
+      this.close();
+    }
+  };
 
   private activeOptions: DodoCheckoutOptions | null = null;
   private readyTimeoutId: number | null = null;
+  private previousActiveElement: HTMLElement | null = null;
 
   public static open(options: DodoCheckoutOptions): void {
     if (!DodoCheckout.instance) {
@@ -32,12 +38,23 @@ export class DodoCheckout {
       return;
     }
 
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      this.previousActiveElement = document.activeElement;
+    }
+
     const session = this.sessionManager.createSession(options.productId);
     this.activeOptions = options;
     this.bindMessageListener();
+    window.addEventListener("keydown", this.escapeHandler);
 
     const iframe = this.iframeManager.create(session.sessionId, session.productId);
     this.iframeManager.mount();
+
+    try {
+      iframe.focus();
+    } catch {
+      // safe fallback
+    }
 
     const initMessage: HostMessage = {
       version: PROTOCOL_VERSION,
@@ -47,6 +64,11 @@ export class DodoCheckout {
     };
 
     iframe.addEventListener("load", () => {
+      try {
+        iframe.focus();
+      } catch {
+        // safe fallback
+      }
       iframe.contentWindow?.postMessage(initMessage, CHECKOUT_ORIGIN);
     });
     iframe.contentWindow?.postMessage(initMessage, CHECKOUT_ORIGIN);
@@ -141,8 +163,28 @@ export class DodoCheckout {
     }
 
     window.removeEventListener("message", this.messageHandler);
+    window.removeEventListener("keydown", this.escapeHandler);
     this.iframeManager.remove();
     this.sessionManager.clear(reason);
     this.activeOptions = null;
+
+    const elementToFocus = this.previousActiveElement;
+    this.previousActiveElement = null;
+
+    if (elementToFocus && typeof elementToFocus.focus === "function") {
+      const focusTarget = () => {
+        try {
+          elementToFocus.focus();
+        } catch {
+          // ignore if detached
+        }
+      };
+
+      focusTarget();
+      if (typeof window !== "undefined") {
+        window.setTimeout(focusTarget, 0);
+        window.setTimeout(focusTarget, 50);
+      }
+    }
   }
 }
