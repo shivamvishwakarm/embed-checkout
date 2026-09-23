@@ -16,16 +16,16 @@ import { type CheckoutState } from "@/features/payment/payment-state";
 export type CheckoutShellProps = {
   state: CheckoutState;
   form: PaymentInput;
-  onFieldChange?: (field: keyof PaymentInput, value: string) => void;
-  onSubmit?: (input: PaymentInput) => void;
-  onClose?: () => void;
-  onRetry?: () => void;
-  onCancelClose?: () => void;
-  onConfirmClose?: () => void;
-  sessionId?: string;
-  processing?: boolean;
-  errorMessage?: string;
-  product?: Product;
+  onFieldChange?: ((field: keyof PaymentInput, value: string) => void) | undefined;
+  onSubmit?: ((input: PaymentInput) => void) | undefined;
+  onClose?: (() => void) | undefined;
+  onRetry?: (() => void) | undefined;
+  onCancelClose?: (() => void) | undefined;
+  onConfirmClose?: (() => void) | undefined;
+  sessionId?: string | undefined;
+  processing?: boolean | undefined;
+  errorMessage?: string | undefined;
+  product?: Product | undefined;
 };
 
 export function CheckoutShell({

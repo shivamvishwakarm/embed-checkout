@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Allow checkout to be embedded in iframes from any origin.
   // In production, restrict X-Frame-Options to specific merchant origins.
   async headers() {
@@ -13,7 +12,7 @@ const nextConfig: NextConfig = {
           // Content Security Policy: allow framing from configured merchant origins
           {
             key: "Content-Security-Policy",
-            value: `frame-ancestors 'self' ${process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] ?? "http://localhost:3000"};`,
+            value: `frame-ancestors 'self' ${process.env.NEXT_PUBLIC_MERCHANT_ORIGIN ?? "http://localhost:3000"};`,
           },
         ],
       },
