@@ -13,176 +13,176 @@ export function UpiQrView({ onSimulateSuccess, processing }: UpiQrViewProps) {
   const [activeTab, setActiveTab] = useState<"qr" | "id">("qr");
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3.5">
       {/* UPI mode toggle */}
-      <div className="flex rounded-xl bg-slate-100 p-1 text-xs font-medium">
+      <div className="flex rounded-xl bg-slate-100/90 p-1 text-xs font-medium border border-slate-200/60 shadow-xs">
         <button
           type="button"
           onClick={() => setActiveTab("qr")}
-          className={`flex-1 rounded-lg py-1.5 transition-all ${
-            activeTab === "qr" ? "bg-white text-slate-900 shadow-sm font-semibold" : "text-slate-500 hover:text-slate-800"
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs transition-all duration-150 ${
+            activeTab === "qr"
+              ? "bg-white text-slate-900 shadow-xs font-semibold"
+              : "text-slate-500 hover:text-slate-900"
           }`}
         >
-          Scan QR Code
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="3" height="3" />
+            <rect x="18" y="18" width="3" height="3" />
+          </svg>
+          <span>Scan QR Code</span>
         </button>
         <button
           type="button"
           onClick={() => setActiveTab("id")}
-          className={`flex-1 rounded-lg py-1.5 transition-all ${
-            activeTab === "id" ? "bg-white text-slate-900 shadow-sm font-semibold" : "text-slate-500 hover:text-slate-800"
+          className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs transition-all duration-150 ${
+            activeTab === "id"
+              ? "bg-white text-slate-900 shadow-xs font-semibold"
+              : "text-slate-500 hover:text-slate-900"
           }`}
         >
-          Enter UPI ID / VPA
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <line x1="19" y1="8" x2="19" y2="14" />
+            <line x1="22" y1="11" x2="16" y2="11" />
+          </svg>
+          <span>UPI ID / VPA</span>
         </button>
       </div>
 
-      {activeTab === "qr" ? (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 text-center shadow-sm">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-800">Scan & Pay</span>
-              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 border border-emerald-200">
-                Instant UPI
-              </span>
+      {/* Unified Tab Container with fixed/smooth height profile */}
+      <div className="min-h-[296px] rounded-2xl border border-slate-200/90 bg-white p-4 sm:p-5 shadow-xs flex flex-col justify-between">
+        {activeTab === "qr" ? (
+          <div className="flex flex-col items-center justify-between h-full space-y-3.5 text-center">
+            {/* Top status bar */}
+            <div className="flex items-center justify-between w-full pb-2.5 border-b border-slate-100">
+            
+           
             </div>
-            <div className="flex items-center gap-1 text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-              <svg className="h-3 w-3 animate-spin text-amber-600" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <span className="font-mono text-[11px] font-medium">Auto-expiring</span>
-            </div>
-          </div>
 
-          {/* Crisp QR Code Graphic */}
-          <div className="mx-auto my-2 flex h-48 w-48 items-center justify-center rounded-2xl border-2 border-slate-100 bg-slate-50/50 p-3 shadow-inner relative group">
-            {/* SVG stylized QR code */}
-            <svg viewBox="0 0 120 120" className="h-full w-full text-slate-900" fill="currentColor">
-              {/* Corner 1 */}
-              <rect x="10" y="10" width="30" height="30" rx="4" fill="none" stroke="currentColor" strokeWidth="6" />
-              <rect x="20" y="20" width="10" height="10" rx="2" />
-              {/* Corner 2 */}
-              <rect x="80" y="10" width="30" height="30" rx="4" fill="none" stroke="currentColor" strokeWidth="6" />
-              <rect x="90" y="20" width="10" height="10" rx="2" />
-              {/* Corner 3 */}
-              <rect x="10" y="80" width="30" height="30" rx="4" fill="none" stroke="currentColor" strokeWidth="6" />
-              <rect x="20" y="90" width="10" height="10" rx="2" />
-              {/* Decorative data modules */}
-              <rect x="50" y="15" width="6" height="6" rx="1" />
-              <rect x="62" y="15" width="6" height="6" rx="1" />
-              <rect x="50" y="27" width="18" height="6" rx="1" />
-              <rect x="15" y="50" width="6" height="18" rx="1" />
-              <rect x="27" y="50" width="6" height="6" rx="1" />
-              <rect x="27" y="62" width="6" height="6" rx="1" />
-              <rect x="50" y="50" width="20" height="20" rx="4" fill="#3b82f6" />
-              {/* Center icon in QR */}
-              <rect x="80" y="50" width="6" height="12" rx="1" />
-              <rect x="92" y="50" width="18" height="6" rx="1" />
-              <rect x="80" y="68" width="12" height="6" rx="1" />
-              <rect x="100" y="68" width="10" height="18" rx="1" />
-              <rect x="50" y="80" width="6" height="18" rx="1" />
-              <rect x="62" y="92" width="18" height="6" rx="1" />
-              <rect x="80" y="92" width="12" height="18" rx="1" />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="rounded-lg bg-white p-1.5 shadow-md border border-slate-200 flex items-center justify-center">
+            {/* Small & Crisp QR Code Container with Premium Gradient Border */}
+            <div className="relative group p-[2px] rounded-2xl  shadow-md transition-transform duration-200 hover:scale-[1.02]">
+              <div className="flex h-32 w-32 items-center justify-center rounded-[14px] bg-white p-2 relative overflow-hidden">
                 <img
-                  src="/UPI-Color.svg"
-                  alt="UPI"
-                  className="h-4 w-auto object-contain"
+                  src="/qr.png"
+                  alt="UPI QR Code"
+                  className="h-full w-full object-contain rounded-lg"
                 />
+                {/* Center UPI micro badge */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="rounded-md bg-white p-1 shadow-sm border border-slate-100/80 flex items-center justify-center">
+                    <img
+                      src="/UPI-Color.svg"
+                      alt="UPI"
+                      className="h-3 w-auto object-contain"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
 
-          <p className="text-xs text-slate-600 font-medium mt-3">Scan using any UPI App</p>
+            <div className="space-y-1">
+              <p className="text-xs font-semibold text-slate-700">
+                Point any camera or UPI app to scan
+              </p>
+              {/* Supported UPI Apps Badges */}
+              <div className="flex items-center justify-center gap-1.5 flex-wrap pt-0.5">
+                {[
+                  { name: "GPay", icon: "/gpay.png" },
+                  { name: "PhonePe", icon: "/phonepay.png" },
+                  { name: "Paytm", icon: "/paytm.png" },
+                  { name: "CRED", icon: "/cred.png" },
+                  { name: "BHIM", icon: "/bhim.png" },
+                ].map((app) => (
+                  <span
+                    key={app.name}
+                    className="inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-slate-50/70 px-2 py-0.5 text-[10px] font-medium text-slate-700 transition-colors hover:bg-slate-100"
+                  >
+                    <img src={app.icon} alt={app.name} className="h-3 w-3 object-contain" />
+                    <span>{app.name}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
 
-          {/* Supported UPI Apps Badges */}
-          <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
-              <img src="/gpay.png" alt="GPay" className="h-3.5 w-3.5 object-contain" />
-              <span>GPay</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
-              <img src="/phonepay.png" alt="PhonePe" className="h-3.5 w-3.5 object-contain" />
-              <span>PhonePe</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
-              <img src="/paytm.png" alt="Paytm" className="h-3.5 w-3.5 object-contain" />
-              <span>Paytm</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
-              <img src="/cred.png" alt="CRED" className="h-3.5 w-3.5 object-contain" />
-              <span>CRED</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
-              <img src="/bhim.png" alt="BHIM" className="h-3.5 w-3.5 object-contain" />
-              <span>BHIM</span>
-            </span>
-          </div>
-
-          {/* Savings banner from reference Image 1 */}
-          <div className="mt-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80 p-2.5 flex items-center justify-center gap-2 text-emerald-800 text-xs font-medium">
-            <span>🏷️</span>
-            <span>Upto 1.5% savings with NeuCard & UPI offers</span>
-          </div>
-
-          {/* One-click simulator for development/testing */}
-          <div className="mt-4 pt-3 border-t border-slate-100">
-            <Button
-              type="button"
-              onClick={onSimulateSuccess}
-              disabled={Boolean(processing)}
-              loading={Boolean(processing)}
-              variant="outline"
-              className="w-full text-xs font-semibold text-slate-700 border-dashed border-slate-300 hover:bg-slate-50"
-            >
-              Simulate UPI Payment Success
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 space-y-4 shadow-sm">
-          <div>
-            <label htmlFor="upi-vpa-input" className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Enter Virtual Payment Address (VPA)
-            </label>
-            <div className="relative">
-              <input
-                id="upi-vpa-input"
-                type="text"
-                value={upiId}
-                onChange={(e) => setUpiId(e.target.value)}
-                placeholder="e.g. yourname@okhdfcbank"
-                className="w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
-              />
+            {/* Fast Simulation Trigger */}
+            <div className="w-full pt-2 border-t border-slate-100">
+              <Button
+                type="button"
+                onClick={onSimulateSuccess}
+                disabled={Boolean(processing)}
+                loading={Boolean(processing)}
+                variant="outline"
+                className="w-full h-9 text-xs font-semibold text-slate-700 border-slate-200 hover:bg-slate-50 hover:text-slate-900"
+              >
+                I&apos;ve sent the payment
+              </Button>
             </div>
           </div>
+        ) : (
+          <div className="flex flex-col justify-between h-full space-y-4">
+            <div>
+              <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 mb-3.5">
+                <span className="text-xs font-bold text-slate-800 tracking-tight">Pay with UPI ID</span>
+                <span className="text-[11px] text-slate-500">Fast & Direct</span>
+              </div>
 
-          <div className="flex gap-2">
-            {["@okaxis", "@okhdfcbank", "@paytm", "@ibl", "@ybl"].map((suffix) => (
-              <button
-                key={suffix}
+              <div>
+                <label htmlFor="upi-vpa-input" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Virtual Payment Address (VPA)
+                </label>
+                <div className="relative">
+                  <input
+                    id="upi-vpa-input"
+                    type="text"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    placeholder="e.g. mobile@upi or username@okhdfc"
+                    className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-all"
+                  />
+                  <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <img src="/UPI-Color.svg" alt="UPI" className="h-3 w-auto object-contain opacity-70" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Common Handle Pills */}
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
+                {["@okhdfcbank", "@okaxis", "@paytm", "@ybl", "@ibl"].map((suffix) => (
+                  <button
+                    key={suffix}
+                    type="button"
+                    onClick={() =>
+                      setUpiId((curr) => {
+                        const clean = curr.includes("@") ? curr.split("@")[0] : curr;
+                        return (clean || "user") + suffix;
+                      })
+                    }
+                    className="rounded-lg border border-slate-200/90 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                  >
+                    {suffix}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100">
+              <Button
                 type="button"
-                onClick={() => setUpiId((curr) => (curr.includes("@") ? curr.split("@")[0] + suffix : curr + suffix))}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-100"
+                onClick={onSimulateSuccess}
+                disabled={Boolean(processing) || !upiId.trim()}
+                loading={Boolean(processing)}
+                className="w-full h-10 text-xs font-semibold bg-slate-900 text-white hover:bg-slate-800"
               >
-                {suffix}
-              </button>
-            ))}
+                Verify &amp; Request Payment
+              </Button>
+            </div>
           </div>
-
-          <Button
-            type="button"
-            onClick={onSimulateSuccess}
-            disabled={Boolean(processing)}
-            loading={Boolean(processing)}
-            className="w-full"
-          >
-            Verify & Pay
-          </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

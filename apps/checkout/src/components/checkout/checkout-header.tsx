@@ -25,15 +25,15 @@ export function CheckoutHeader({ title = "Payment", onClose, showTimer = true }:
   const formattedTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   return (
-    <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+    <div className="flex items-center justify-between border-slate-100">
       {/* Test Mode & Expiration Indicator */}
       <div className="flex items-center gap-2 flex-wrap">
     
 
         {showTimer && (
-          <div className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-blue-50/50 px-2 py-0.5 rounded-md border border-amber-700">
-            <span>⏰ Expires in</span>
-            <span className="font-mono font-bold tracking-tight">{formattedTime}</span>
+          <div className="inline-flex items-center  ">
+            {/* <span>⏰ Expires in</span>
+            <span className="font-mono font-bold tracking-tight">{formattedTime}</span> */}
           </div>
         )}
       </div>

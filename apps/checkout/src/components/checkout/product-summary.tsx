@@ -40,14 +40,14 @@ export function ProductSummary({ product }: ProductSummaryProps) {
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-slate-800">Dodo Store</span>
-            <span className="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.2 text-[10px] font-medium text-blue-700">
+            {/* <span className="inline-flex items-center rounded-full bg-blue-50 px-1.5 py-0.2 text-[10px] font-medium text-blue-700">
               Verified
-            </span>
+            </span> */}
           </div>
         </div>
-        <Badge variant="outline" className="text-[11px] font-medium text-slate-600 bg-white">
+        {/* <Badge variant="outline" className="text-[11px] font-medium text-slate-600 bg-white">
           Pay in {product.currency.toUpperCase()} ▾
-        </Badge>
+        </Badge> */}
       </div>
 
       {/* Main Product Showcase Box */}
