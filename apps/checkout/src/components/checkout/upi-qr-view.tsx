@@ -11,7 +11,7 @@ export type UpiQrViewProps = {
 export function UpiQrView({ onSimulateSuccess, processing }: UpiQrViewProps) {
   const [upiId, setUpiId] = useState("");
   const [activeTab, setActiveTab] = useState<"qr" | "id">("qr");
-
+const [showQr, setShowQr] = useState(false);
   return (
     <div className="space-y-3.5">
       {/* UPI mode toggle */}
@@ -64,25 +64,65 @@ export function UpiQrView({ onSimulateSuccess, processing }: UpiQrViewProps) {
             </div>
 
             {/* Small & Crisp QR Code Container with Premium Gradient Border */}
-            <div className="relative group p-[2px] rounded-2xl  shadow-md transition-transform duration-200 hover:scale-[1.02]">
-              <div className="flex h-32 w-32 items-center justify-center rounded-[14px] bg-white p-2 relative overflow-hidden">
-                <img
-                  src="/qr.png"
-                  alt="UPI QR Code"
-                  className="h-full w-full object-contain rounded-lg"
-                />
-                {/* Center UPI micro badge */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="rounded-md bg-white p-1 shadow-sm border border-slate-100/80 flex items-center justify-center">
-                    <img
-                      src="/UPI-Color.svg"
-                      alt="UPI"
-                      className="h-3 w-auto object-contain"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* QR Code */}
+<div className="relative">
+  <div className="relative rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+    <div className="relative h-36 w-36 overflow-hidden rounded-xl bg-white">
+      <img
+        src="/qr.png"
+        alt="UPI QR Code"
+        className={`h-full w-full object-contain transition-all duration-300 ${
+          showQr ? "scale-100 blur-0" : "scale-110 blur-[5px]"
+        }`}
+      />
+
+      {!showQr && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white/25 backdrop-blur-[1px]">
+          <button
+            type="button"
+            onClick={() => setShowQr(true)}
+            className="group inline-flex items-center gap-2 rounded-xl border border-white/80 bg-white/95 px-4 py-2.5 text-xs font-semibold text-slate-800 shadow-lg shadow-slate-900/10 backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] hover:bg-white active:scale-[0.98]"
+          >
+            <svg
+              className="h-4 w-4 text-slate-700"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+              <circle cx="12" cy="12" r="2.5" />
+            </svg>
+
+            Show QR
+          </button>
+        </div>
+      )}
+
+      {/* UPI badge */}
+      {showQr && (
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="flex items-center justify-center rounded-md border border-slate-100 bg-white p-1 shadow-sm">
+            <img
+              src="/UPI-Color.svg"
+              alt="UPI"
+              className="h-3 w-auto object-contain"
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <p className="mt-2 text-center text-[10px] font-medium text-slate-400">
+    {showQr
+      ? "Scan using any UPI app"
+      : "Reveal the QR code to continue"}
+  </p>
+</div>
 
             <div className="space-y-1">
               <p className="text-xs font-semibold text-slate-700">

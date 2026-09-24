@@ -363,13 +363,13 @@ class ConfettiEngine {
    */
 public burstCelebration() {
   this.fire({
-    particleCount: 190,
+    particleCount: 250,
     spread: 190,
     origin: {
       x: 0.5,
       y: 0.3,
     },
-    startVelocity: 20,
+    startVelocity: 18,
     gravity: 0.9,
     ticks: 95,
     scalar: 0.75,
