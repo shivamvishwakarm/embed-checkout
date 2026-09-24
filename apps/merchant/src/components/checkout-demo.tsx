@@ -172,7 +172,7 @@ export function CheckoutDemo() {
           </div>
 
           {/* Programmatic close control if checkout is active */}
-          {isCheckoutActive && (
+          {/* {isCheckoutActive && (
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-2 text-xs font-medium text-amber-400 animate-pulse">
                 <span className="h-2 w-2 rounded-full bg-amber-400" />
@@ -186,7 +186,7 @@ export function CheckoutDemo() {
                 Call DodoCheckout.close()
               </button>
             </div>
-          )}
+          )} */}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -202,18 +202,18 @@ export function CheckoutDemo() {
       </section>
 
       {/* Custom Product Test Section */}
-      <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
+      {/* <section className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4"> */}
+          {/* <div>
             <h3 className="text-sm font-semibold text-white">
               Test Invalid / Custom Product ID
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
               Verify how the checkout handles nonexistent products (e.g., <code className="font-mono text-slate-300">prod_unknown</code>).
             </p>
-          </div>
+          </div> */}
 
-          <form
+          {/* <form
             onSubmit={(e) => {
               e.preventDefault();
               handleBuy(customProductId || "prod_unknown");
@@ -234,19 +234,19 @@ export function CheckoutDemo() {
             >
               Test Product ID
             </button>
-          </form>
-        </div>
-      </section>
+          </form> */}
+        {/* </div>
+      </section> */}
 
       {/* Deterministic Test Cards Reference */}
-      <section>
+      {/* <section>
         <TestCardPanel />
-      </section>
+      </section> */}
 
       {/* Real-time Event Log */}
-      <section>
+      {/* <section>
         <EventLog events={events} onClear={handleClearLog} />
-      </section>
+      </section> */}
     </div>
   );
 }
