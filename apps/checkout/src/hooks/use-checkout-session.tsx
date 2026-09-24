@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CheckoutShell } from "@/components/checkout/checkout-shell";
+import { CloseConfirmation } from "@/components/checkout/close-confirmation";
 import {
   type CheckoutState,
   closeConfirmationState,
@@ -212,54 +213,63 @@ export function useCheckoutSession() {
     setState(readyState(product));
   }, [product]);
 
-  const closeCheckout = useCallback(() => {
-    const currentSessionId =
+  const [showCloseConfirmation, setShowCloseConfirmation] = useState(false);
+
+  const getEffectiveSessionId = useCallback(() => {
+    return (
       sessionId ??
       sessionIdRef.current ??
-      (typeof window !== "undefined" ? getCheckoutSessionFromUrl(window.location.search, sourceOrigin)?.sessionId : undefined);
-    if (!currentSessionId) {
-      setState(closedState("USER_CLOSED"));
-      return;
-    }
+      (typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("sessionId") || undefined
+        : undefined)
+    );
+  }, [sessionId]);
 
+  const closeCheckout = useCallback(() => {
+    const currentSessionId = getEffectiveSessionId();
+
+    // Only prompt confirmation if payment is actively in-flight with the network
     if (state.status === "PROCESSING") {
-      setState(closeConfirmationState(product ?? getProduct(form.productId) ?? { id: form.productId, name: "Dodo Checkout", description: "Secure payment", price: 0, currency: "USD" }));
+      setShowCloseConfirmation(true);
       return;
     }
 
+    // In READY, FAILURE, or terminal states, close immediately with zero delay
+    setShowCloseConfirmation(false);
+    if (currentSessionId) {
+      sendCheckoutClosed(currentSessionId, "USER_CLOSED");
+    }
     setState(closedState("USER_CLOSED"));
-    sendCheckoutClosed(currentSessionId, "USER_CLOSED");
-  }, [form.productId, product, sessionId, sourceOrigin, state.status]);
+  }, [getEffectiveSessionId, state.status]);
 
   const cancelClose = useCallback(() => {
-    const restoreProduct = product ?? getProduct(form.productId);
-    if (restoreProduct) {
-      setState(readyState(restoreProduct));
-      return;
+    setShowCloseConfirmation(false);
+    if (state.status === "CLOSE_CONFIRMATION") {
+      const restoreProduct = product ?? getProduct(form.productId);
+      if (restoreProduct) {
+        setState(readyState(restoreProduct));
+        return;
+      }
+      setState(createInitialState());
     }
-
-    setState(createInitialState());
-  }, [form.productId, product]);
+  }, [form.productId, product, state.status]);
 
   const confirmClose = useCallback(() => {
-    const currentSessionId =
-      sessionId ??
-      sessionIdRef.current ??
-      (typeof window !== "undefined" ? getCheckoutSessionFromUrl(window.location.search, sourceOrigin)?.sessionId : undefined);
-    if (!currentSessionId) {
-      setState(closedState("USER_CLOSED"));
-      return;
-    }
+    setShowCloseConfirmation(false);
+    const currentSessionId = getEffectiveSessionId();
 
+    if (currentSessionId) {
+      sendCheckoutClosed(currentSessionId, "USER_CLOSED");
+    }
     setState(closedState("USER_CLOSED"));
-    sendCheckoutClosed(currentSessionId, "USER_CLOSED");
-  }, [sessionId, sourceOrigin]);
+  }, [getEffectiveSessionId]);
 
   useEffect(() => {
+    console.log("close confirmation handle close with escape")
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        if (state.status === "CLOSE_CONFIRMATION") {
+        if (showCloseConfirmation || state.status === "CLOSE_CONFIRMATION") {
           cancelClose();
         } else {
           closeCheckout();
@@ -269,7 +279,7 @@ export function useCheckoutSession() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [cancelClose, closeCheckout, state.status]);
+  }, [cancelClose, closeCheckout, showCloseConfirmation, state.status]);
 
   return {
     state,
@@ -277,6 +287,7 @@ export function useCheckoutSession() {
     product,
     sessionId,
     errorMessage,
+    showCloseConfirmation,
     onFieldChange,
     submitPayment,
     retryPayment,
@@ -294,7 +305,11 @@ export function CheckoutPageShell() {
       className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-3 sm:p-6 backdrop-blur-md transition-opacity"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          checkout.closeCheckout();
+          if (checkout.showCloseConfirmation) {
+            checkout.cancelClose();
+          } else {
+            checkout.closeCheckout();
+          }
         }
       }}
       role="dialog"
@@ -302,7 +317,7 @@ export function CheckoutPageShell() {
       aria-label="Checkout dialog"
     >
       <div
-        className="w-full max-w-lg md:max-w-3xl lg:max-w-4xl overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-2xl transition-all animate-modal-in my-auto"
+        className="relative w-full max-w-lg md:max-w-3xl lg:max-w-4xl overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-7 shadow-2xl transition-all animate-modal-in my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <CheckoutShell
@@ -318,6 +333,25 @@ export function CheckoutPageShell() {
           errorMessage={checkout.errorMessage}
           product={checkout.product}
         />
+
+        {checkout.showCloseConfirmation && (
+          <div
+            className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/50 backdrop-blur-xs rounded-2xl sm:rounded-3xl animate-modal-in"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                checkout.cancelClose();
+              }
+            }}
+          >
+            <div className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+              <CloseConfirmation
+                onCancel={checkout.cancelClose}
+                onConfirm={checkout.confirmClose}
+                isProcessing={checkout.state.status === "PROCESSING"}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

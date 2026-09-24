@@ -99,7 +99,7 @@ test.describe("Dodo Checkout End-to-End Integration", () => {
     await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
   });
 
-  test("6.5: User close button dismisses iframe and triggers onClose", async ({ page }) => {
+  test("6.5: User close button immediately dismisses iframe and triggers onClose", async ({ page }) => {
     await page.locator("button", { hasText: "Buy for $49" }).click();
 
     const frame = page.frameLocator('iframe[title="Dodo Checkout"]');
@@ -109,7 +109,7 @@ test.describe("Dodo Checkout End-to-End Integration", () => {
     await expect(closeBtn).toBeVisible();
     await closeBtn.click();
 
-    // Iframe removed
+    // Iframe removed immediately
     await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
 
     // Event log has CHECKOUT_CLOSED
@@ -135,10 +135,10 @@ test.describe("Dodo Checkout End-to-End Integration", () => {
     if (await closeBtn.isVisible()) {
       await closeBtn.click();
       // Should show warning: Payment is being processed
-      const confirmDialog = frame.getByText("Payment is being processed.");
+      const confirmDialog = frame.getByText(/Payment is being processed/i);
       if (await confirmDialog.isVisible()) {
-        // Click Stay or Close
-        await frame.getByRole("button", { name: "Close", exact: true }).click();
+        // Click Yes, Exit or Close
+        await frame.getByRole("button", { name: /Yes, Exit|Close/i }).click();
         await expect(page.locator('iframe[title="Dodo Checkout"]')).toHaveCount(0);
       }
     }

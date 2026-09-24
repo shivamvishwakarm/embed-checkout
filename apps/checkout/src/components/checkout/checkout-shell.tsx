@@ -229,7 +229,7 @@ export function CheckoutShell({
 
   const renderCloseConfirmationState = () => (
     <div className="space-y-6 max-w-md mx-auto py-4">
-      <CheckoutHeader title="Secure checkout" onClose={onClose} showTimer={false} />
+      <CheckoutHeader title="Exit Checkout" onClose={onCancelClose} showTimer={false} />
       <CloseConfirmation onCancel={onCancelClose} onConfirm={onConfirmClose} />
     </div>
   );

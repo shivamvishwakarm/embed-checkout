@@ -73,7 +73,24 @@ export function validateCheckoutMessage(value: unknown): value is CheckoutMessag
 }
 
 export function isTrustedMessageOrigin(origin: string): boolean {
-  return origin === CHECKOUT_ORIGIN;
+  if (origin === CHECKOUT_ORIGIN) return true;
+  try {
+    const originUrl = new URL(origin);
+    const expectedUrl = new URL(CHECKOUT_ORIGIN);
+    const isLoopback = (host: string) =>
+      host === "localhost" || host === "127.0.0.1" || host === "[::1]" || host === "::1";
+    if (
+      originUrl.port === expectedUrl.port &&
+      originUrl.protocol === expectedUrl.protocol &&
+      isLoopback(originUrl.hostname) &&
+      isLoopback(expectedUrl.hostname)
+    ) {
+      return true;
+    }
+  } catch {
+    // ignore invalid URLs
+  }
+  return false;
 }
 
 export function isTrustedMessageSource(source: MessageEventSource | null, targetWindow: Window): boolean {
