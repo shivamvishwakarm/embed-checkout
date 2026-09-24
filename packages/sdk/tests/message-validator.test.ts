@@ -288,7 +288,7 @@ describe("message-validator", () => {
     it("returns false for different origins", () => {
       expect(isTrustedMessageOrigin("http://evil.com")).toBe(false);
       expect(isTrustedMessageOrigin("https://attacker.org")).toBe(false);
-      expect(isTrustedMessageOrigin("http://localhost:3000")).toBe(false);
+      expect(isTrustedMessageOrigin("https://untrusted-merchant.org")).toBe(false);
       expect(isTrustedMessageOrigin("")).toBe(false);
     });
   });

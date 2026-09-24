@@ -28,7 +28,9 @@ import { validateHostMessage } from "@/lib/protocol-validator";
 import { PaymentSuccess } from "@/components/checkout/payment-success";
 
 const DEFAULT_MERCHANT_ORIGIN =
-  process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] ?? "http://localhost:3000";
+  process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] ??
+  process.env["MERCHANT_ORIGIN"] ??
+  "";
 
 function getReferrerOrigin(): string {
   if (typeof window === "undefined") {

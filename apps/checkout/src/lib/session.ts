@@ -6,7 +6,9 @@ export type CheckoutSessionContext = {
 
 export function getCheckoutSessionFromUrl(
   search: string | URL,
-  fallbackOrigin = "http://localhost:3001",
+  fallbackOrigin = process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] ??
+    process.env["NEXT_PUBLIC_CHECKOUT_ORIGIN"] ??
+    "",
 ): CheckoutSessionContext | null {
   const params =
     typeof search === "string"

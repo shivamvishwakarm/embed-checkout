@@ -28,11 +28,11 @@ export default function MerchantPage() {
           <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />
-              Merchant: <strong className="text-slate-300">localhost:3000</strong>
+              Merchant: <strong className="text-slate-300">{process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] || "Origin"}</strong>
             </span>
             <span className="text-slate-600">|</span>
             <span>
-              Checkout Iframe: <strong className="text-slate-300">localhost:3001</strong>
+              Checkout Iframe: <strong className="text-slate-300">{process.env["NEXT_PUBLIC_CHECKOUT_ORIGIN"] || "Origin"}</strong>
             </span>
           </div>
         </div>
