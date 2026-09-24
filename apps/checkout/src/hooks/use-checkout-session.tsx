@@ -224,18 +224,19 @@ export function useCheckoutSession() {
   const closeCheckout = useCallback(() => {
     const currentSessionId = getEffectiveSessionId();
 
-    // Only prompt confirmation if payment is actively in-flight with the network
-    if (state.status === "PROCESSING") {
-      setShowCloseConfirmation(true);
+    // If session is already finished, closed, or in error, close immediately
+    if (state.status === "SUCCESS" || state.status === "CLOSED" || state.status === "ERROR") {
+      setShowCloseConfirmation(false);
+      if (currentSessionId) {
+        sendCheckoutClosed(currentSessionId, "USER_CLOSED");
+      }
+      setState(closedState("USER_CLOSED"));
       return;
     }
 
-    // In READY, FAILURE, or terminal states, close immediately with zero delay
-    setShowCloseConfirmation(false);
-    if (currentSessionId) {
-      sendCheckoutClosed(currentSessionId, "USER_CLOSED");
-    }
-    setState(closedState("USER_CLOSED"));
+    // In active payment states (READY, PROCESSING, FAILURE, CREATED, LOADING),
+    // prompt user with confirmation dialog
+    setShowCloseConfirmation(true);
   }, [getEffectiveSessionId, state.status]);
 
   const cancelClose = useCallback(() => {
