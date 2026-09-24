@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getProduct, type Product } from "@/lib/products";
 import type { PaymentInput } from "@/features/payment/payment-types";
 import { type CheckoutState } from "@/features/payment/payment-state";
+import { step } from "next/dist/experimental/testmode/playwright/step";
 
 export type CheckoutShellProps = {
   state: CheckoutState;
@@ -197,7 +198,7 @@ export function CheckoutShell({
             <div className="absolute inset-0 animate-ping opacity-25 rounded-full bg-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="font-bold text-base text-slate-900">Contacting card network...</p>
+            <p className="font-bold text-base text-slate-900">Processing...</p>
             <p className="text-xs text-slate-500">
               Please do not refresh or close this window while we verify your transaction.
             </p>
@@ -222,11 +223,18 @@ export function CheckoutShell({
 
   const renderSuccessState = () => {
     const successSessionId = sessionId ?? (state.status === "SUCCESS" ? state.sessionId : undefined) ?? "cs_unknown";
+    const successProduct = state.status === "SUCCESS" && state.product ? state.product : resolvedProduct;
+    const attemptId = state.status === "SUCCESS" ? state.attemptId : undefined;
 
     return (
-      <div className="space-y-6 max-w-lg mx-auto py-4">
+      <div className="space-y-4 max-w-lg mx-auto py-2">
         <CheckoutHeader title="Payment complete" onClose={onClose} showTimer={false} />
-        <PaymentSuccess sessionId={successSessionId} />
+        <PaymentSuccess
+          sessionId={successSessionId}
+          product={successProduct}
+          attemptId={attemptId}
+          onClose={onClose}
+        />
       </div>
     );
   };
@@ -263,8 +271,10 @@ export function CheckoutShell({
     </div>
   );
 
+  console.log("payment status", state.status)
   switch (state.status) {
     case "CREATED":
+        
       return renderReadyState();
     case "LOADING":
       return renderLoadingSkeleton();

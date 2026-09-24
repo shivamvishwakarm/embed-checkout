@@ -25,6 +25,7 @@ import {
   sendPaymentSuccess,
 } from "@/lib/protocol";
 import { validateHostMessage } from "@/lib/protocol-validator";
+import { PaymentSuccess } from "@/components/checkout/payment-success";
 
 const DEFAULT_MERCHANT_ORIGIN =
   process.env["NEXT_PUBLIC_MERCHANT_ORIGIN"] ?? "http://localhost:3000";
@@ -75,6 +76,7 @@ export function useCheckoutSession() {
   const product =
     state.status === "READY" ||
     state.status === "PROCESSING" ||
+    state.status === "SUCCESS" ||
     state.status === "FAILURE" ||
     state.status === "CLOSE_CONFIRMATION"
       ? state.product
@@ -177,18 +179,37 @@ export function useCheckoutSession() {
       setErrorMessage("Please complete all required fields.");
       return;
     }
+    console.log("1. starting payment");
+
 
     const nextAttempt = processingState(productForPayment, "pending");
+    console.log("2. before charge");
     setState(nextAttempt);
     setErrorMessage(undefined);
 
     const result = await engineRef.current!.charge(normalizedInput);
+console.log("3. charge returned", result);
 
-    if (result.ok) {
-      setState(successState(currentSessionId));
-      sendPaymentSuccess(currentSessionId, result.attemptId);
-      return;
-    }
+if (result.ok) {
+  console.log("4. setting SUCCESS");
+
+  setState(
+    successState(
+      currentSessionId,
+      productForPayment,
+      result.attemptId
+    )
+  );
+
+  console.log("5. after setState");
+
+  // TEMPORARILY COMMENT THIS
+  // sendPaymentSuccess(currentSessionId, result.attemptId);
+
+  console.log("6. before return");
+
+  return;
+}
 
     const paymentError: PaymentError = result.error ?? {
       code: "UNKNOWN_ERROR",
@@ -277,6 +298,8 @@ export function useCheckoutSession() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [cancelClose, closeCheckout, showCloseConfirmation, state.status]);
 
+  console.log("HOOK STATE:", state.status);
+
   return {
     state,
     form,
@@ -302,7 +325,7 @@ export function CheckoutPageShell() {
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           if (checkout.showCloseConfirmation) {
-            checkout.cancelClose();
+            <PaymentSuccess sessionId={checkout.sessionId}/>
           } else {
             checkout.closeCheckout();
           }

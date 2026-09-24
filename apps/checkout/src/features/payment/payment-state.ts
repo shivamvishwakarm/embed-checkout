@@ -12,7 +12,7 @@ export type CheckoutState =
   | { status: "READY"; product: Product }
   | { status: "PROCESSING"; product: Product; attemptId: string }
   | { status: "FAILURE"; product: Product; error: PaymentError; retryable: boolean }
-  | { status: "SUCCESS"; sessionId: string }
+  | { status: "SUCCESS"; sessionId: string; product?: Product | undefined; attemptId?: string | undefined }
   | { status: "CLOSED"; reason: CloseReason }
   | { status: "CLOSE_CONFIRMATION"; product: Product }
   | { status: "ERROR"; code: string; message: string };
@@ -41,8 +41,12 @@ export function failureState(
   return { status: "FAILURE", product, error, retryable };
 }
 
-export function successState(sessionId: string): CheckoutState {
-  return { status: "SUCCESS", sessionId };
+export function successState(
+  sessionId: string,
+  product?: Product,
+  attemptId?: string
+): CheckoutState {
+  return { status: "SUCCESS", sessionId, product, attemptId };
 }
 
 export function closedState(reason: CloseReason): CheckoutState {
