@@ -54,14 +54,10 @@ function getInitialForm(productId = ""): PaymentInput {
 
 export function useCheckoutSession() {
   const [sourceOrigin] = useState<string>(getReferrerOrigin);
-  const initialSession = typeof window !== "undefined" ? getCheckoutSessionFromUrl(window.location.search, sourceOrigin) : null;
-  const initialProduct = initialSession?.productId ? getProduct(initialSession.productId) : undefined;
 
-  const [state, setState] = useState<CheckoutState>(() =>
-    initialProduct ? readyState(initialProduct) : createInitialState(),
-  );
-  const [sessionId, setSessionId] = useState<string | undefined>(() => initialSession?.sessionId);
-  const [form, setForm] = useState<PaymentInput>(() => getInitialForm(initialSession?.productId ?? ""));
+  const [state, setState] = useState<CheckoutState>(createInitialState);
+  const [sessionId, setSessionId] = useState<string | undefined>(undefined);
+  const [form, setForm] = useState<PaymentInput>(() => getInitialForm());
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const engineRef = useRef<DeterministicFakePaymentEngine | null>(null);
@@ -265,7 +261,6 @@ export function useCheckoutSession() {
   }, [getEffectiveSessionId]);
 
   useEffect(() => {
-    console.log("close confirmation handle close with escape")
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
