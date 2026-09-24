@@ -28,13 +28,10 @@ export function CheckoutHeader({ title = "Payment", onClose, showTimer = true }:
     <div className="flex items-center justify-between pb-3 border-b border-slate-100">
       {/* Test Mode & Expiration Indicator */}
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-300/80 bg-amber-50/90 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800 shadow-xs">
-          <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-ping" />
-          <span>Test Mode</span>
-        </div>
+    
 
         {showTimer && (
-          <div className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50/50 px-2 py-0.5 rounded-md border border-amber-200/60">
+          <div className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-blue-50/50 px-2 py-0.5 rounded-md border border-amber-700">
             <span>⏰ Expires in</span>
             <span className="font-mono font-bold tracking-tight">{formattedTime}</span>
           </div>

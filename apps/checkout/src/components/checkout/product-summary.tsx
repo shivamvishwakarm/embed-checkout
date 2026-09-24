@@ -31,8 +31,12 @@ export function ProductSummary({ product }: ProductSummaryProps) {
       {/* Merchant Header Bar */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-pink-100 text-xs font-bold text-pink-700 ring-2 ring-pink-50">
-            D
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/80 bg-white  shadow-2xs overflow-hidden">
+            <img
+              src="/dodo-icon.png"
+              alt="Dodo Store"
+              className="h-full w-full object-contain"
+            />
           </div>
           <div className="flex items-center gap-1.5">
             <span className="text-xs font-semibold text-slate-800">Dodo Store</span>
@@ -50,10 +54,12 @@ export function ProductSummary({ product }: ProductSummaryProps) {
       <div className="rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm backdrop-blur-sm transition-all hover:shadow-md">
         <div className="flex items-start gap-3.5">
           {/* Product Icon Avatar */}
-          <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-sm overflow-hidden">
-            <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-slate-900 text-white font-bold text-xl">
-              🦤
-            </div>
+          <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-xl  shadow-sm overflow-hidden border border-slate-100 bg-white">
+            <img
+              src="/dodo-icon.png"
+              alt="Dodo"
+              className="h-full w-full object-contain"
+            />
           </div>
 
           <div className="flex-1 min-w-0">

@@ -8,8 +8,12 @@ export default function MerchantPage() {
       <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 text-white font-black text-lg shadow-lg shadow-indigo-500/20">
-              🦤
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white p-1 shadow-lg shadow-indigo-500/10 border border-slate-700/50 overflow-hidden">
+              <img
+                src="/dodo-icon.png"
+                alt="Dodo Store"
+                className="h-full w-full object-contain"
+              />
             </div>
             <div>
               <span className="font-bold text-white text-base tracking-tight">

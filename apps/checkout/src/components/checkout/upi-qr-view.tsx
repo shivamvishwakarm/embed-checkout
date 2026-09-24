@@ -85,8 +85,12 @@ export function UpiQrView({ onSimulateSuccess, processing }: UpiQrViewProps) {
               <rect x="80" y="92" width="12" height="18" rx="1" />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="rounded-lg bg-white p-1.5 shadow-md border border-slate-200">
-                <span className="text-xs font-black text-blue-600 tracking-tighter">UPI</span>
+              <div className="rounded-lg bg-white p-1.5 shadow-md border border-slate-200 flex items-center justify-center">
+                <img
+                  src="/UPI-Color.svg"
+                  alt="UPI"
+                  className="h-4 w-auto object-contain"
+                />
               </div>
             </div>
           </div>
@@ -95,20 +99,25 @@ export function UpiQrView({ onSimulateSuccess, processing }: UpiQrViewProps) {
 
           {/* Supported UPI Apps Badges */}
           <div className="mt-3 flex items-center justify-center gap-2 flex-wrap">
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-700">
-              <span className="text-[#008236] font-bold">G</span>Pay
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
+              <img src="/gpay.png" alt="GPay" className="h-3.5 w-3.5 object-contain" />
+              <span>GPay</span>
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-purple-700">
-              PhonePe
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
+              <img src="/phonepay.png" alt="PhonePe" className="h-3.5 w-3.5 object-contain" />
+              <span>PhonePe</span>
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-sky-600">
-              Paytm
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
+              <img src="/paytm.png" alt="Paytm" className="h-3.5 w-3.5 object-contain" />
+              <span>Paytm</span>
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-900">
-              CRED
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
+              <img src="/cred.png" alt="CRED" className="h-3.5 w-3.5 object-contain" />
+              <span>CRED</span>
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-orange-600">
-              BHIM
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-slate-700 shadow-2xs">
+              <img src="/bhim.png" alt="BHIM" className="h-3.5 w-3.5 object-contain" />
+              <span>BHIM</span>
             </span>
           </div>
 

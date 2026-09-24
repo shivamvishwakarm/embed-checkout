@@ -116,10 +116,11 @@ export function CheckoutShell({
                 value="upi"
                 className="flex items-center justify-center gap-2 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-sm"
               >
-                <span className="flex h-3.5 w-3.5 items-center justify-center rounded-sm bg-gradient-to-r from-orange-500 via-white to-green-600 border border-slate-300">
-                  <span className="h-1.5 w-1.5 rounded-full bg-blue-700" />
-                </span>
-                <span>UPI</span>
+                <img
+                  src="/UPI-Color.svg"
+                  alt="UPI"
+                  className="h-3.5 w-auto object-contain"
+                />
               </TabsTrigger>
             </TabsList>
 
@@ -162,9 +163,12 @@ export function CheckoutShell({
               <span className="font-medium text-slate-500">dodopayments.com</span>, who also handles order-related inquiries and returns.
             </p>
             <div className="mt-2 flex items-center justify-center gap-3 text-[11px] text-slate-500 font-medium">
-              <span className="flex items-center gap-1">
-                <span>🦤</span>
-                <span className="font-semibold text-slate-700">Dodo Payments</span>
+              <span className="flex items-center gap-1.5">
+                <img
+                  src="/dodo-icon-with_name.png"
+                  alt="Dodo Payments"
+                  className="h-4 object-contain inline-block"
+                />
               </span>
               <span>·</span>
               <a href="#privacy" onClick={(e) => e.preventDefault()} className="hover:text-slate-800 hover:underline">
